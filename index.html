@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>free data</title>
+    <style>
+        /* General Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background-color: #333;
+            padding: 15px;
+            color: white;
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Remove underline from the button */
+        a, button {
+            text-decoration: none;  /* Ensure there is no underline */
+        }
+
+        /* Form Container */
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 50px auto;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 20px;
+        }
+
+        /* Phone Number Label */
+        label[for="phone-number"] {
+            color: #808080;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        /* Phone Number Input Field */
+        .phone-number-container {
+            display: flex;
+            margin-bottom: 2px;
+        }
+
+        .country-code {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #ddd;
+            border: 2px solid #ddd;
+            border-right: none;
+            border-radius: 5px 0 0 5px;
+            color: #333;
+            pointer-events: none;
+            text-align: center;
+            width: 60px;
+        }
+
+        input[type="tel"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            border: 2px solid #ddd;
+            border-left: none;
+            border-radius: 0 5px 5px 0;
+            outline: none;
+        }
+
+        /* Buttons */
+        input[type="submit"],
+        .share-btn,
+        .data-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+            margin: 10px auto;
+            width: 100%;
+            text-decoration: none; /* Removed text-decoration */
+        }
+
+        .share-btn {
+            background-color: #007BFF;
+            display: none;
+            font-weight: bold;
+            text-decoration: none; /* Removed text-decoration */
+        }
+
+        .data-btn {
+            background-color: #FF9800;
+            display: none;
+            font-weight: bold;
+            text-decoration: none; /* Removed text-decoration */
+        }
+
+        input[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+        .share-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .data-btn:hover {
+            background-color: #E68900;
+        }
+
+        /* Error Message with Fade Out Effect */
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 20px;
+            width: 0%;
+            background-color: #4CAF50;
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            color: green;
+            font-size: 18px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        /* Message Below Progress Bar */
+        #progress-message {
+            display: none;
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        let shareClicks = 0;
+
+        function validateForm() {
+            var phoneNumber = document.getElementById("phone-number").value;
+            var errorMessage = document.getElementById("error-message");
+            var pattern = /^\d{9}$/;
+
+            if (!pattern.test(phoneNumber)) {
+                errorMessage.style.display = "block";
+                errorMessage.style.opacity = "1"; // Reset opacity
+
+                // 4 seconds පසු fade out animation එක start කරන්න
+                setTimeout(function () {
+                    errorMessage.style.animation = "fadeOut 1s ease-out forwards";
+                }, 4000);
+
+                // 5 seconds පසු error message එක අයින් කරන්න
+                setTimeout(function () {
+                    errorMessage.style.display = "none";
+                    errorMessage.style.animation = ""; // Reset animation for next time
+                }, 5000);
+
+                return false;
+            }
+
+            document.getElementById("share-title").style.display = "block";
+            document.getElementById("share-btn").style.display = "block";
+            return false;
+        }
+
+        function shareNow() {
+            if (shareClicks < 5) {
+                shareClicks++;
+                document.getElementById("progress-container").style.display = "block";
+
+                let progress = (shareClicks / 5) * 100;
+
+                // Ensure progress doesn't go beyond 100%
+                if (progress > 100) {
+                    progress = 100;
+                }
+
+                document.getElementById("progress-bar").style.width = progress + "%";
+                document.getElementById("progress-bar").innerText = Math.round(progress) + "%";
+
+                document.getElementById("progress-message").style.display = "block"; // Show message
+
+                if (shareClicks === 5) {
+                    document.getElementById("success-message").style.display = "block";
+                    document.getElementById("share-btn").style.display = "none";
+                    document.getElementById("data-btn").style.display = "block";
+                    document.getElementById("progress-message").style.display = "none"; // Hide message on completion
+
+                    // Fade out share-title message after 5 seconds
+                    let shareTitle = document.getElementById("share-title");
+                    setTimeout(function () {
+                        shareTitle.style.animation = "fadeOut 1s ease-out forwards"; // fade out animation
+                    }, 2000); // Delay 5 seconds before fade out
+
+                    setTimeout(function () {
+                        shareTitle.style.display = "none"; // Remove element after animation
+                        shareTitle.style.animation = ""; // Reset animation
+                    }, 4000); // Remove after 6 seconds
+                }
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">නොමිලේ ලබාදෙන 10 GB දත්ත (data) ප්‍රමාණය</div>
+
+    <!-- Form Container -->
+    <div class="container">
+        <h1>ඔබගේ දුරකථන අංකය ඇතුලත් කරන්න</h1>
+        <form onsubmit="return validateForm()">
+            <label for="phone-number"><b>දුරකථන අංකය "0" නොමැතිව ඇතුලත් කරන්න<br>උදා:- "75XXXXXXXX"</b></label>
+            <div class="phone-number-container">
+                <span class="country-code">+94</span>
+                <input type="tel" id="phone-number" name="phone-number" placeholder="Enter your number">
+            </div>
+
+            <input type="submit" value="ඇතුලත් කරන්න">
+            <div id="error-message" class="error" style="display: none;">කරුණාකර නිවැරදි දුරකථන අංකයක් ඇතුලත් කරන්න</div>
+        </form>
+        <br><br>
+
+        <div id="share-title" class="share-title" style="display: none;">
+            මෙය ඔබගෙ මිතුරන් 10 දෙනෙකුට ශෙයාර් කරන්න ඔවුන්ටත් ප්‍රතිලාභ ලැබේ
+        </div>
+
+        <a href="https://wa.me/?text=*සිම්%20කාඩ්%20පත්%20සදහා%2030GB%20නොමිලේ%20දත්ත%20පිරිනැමීම*%0A%0A*අපගේ%20නොමිලේ%20වසර%20ආරම්භ%20දත්ත%20සහ%20ගුවන්%20කාල%20දී%20මනාව%20මෙහි%20ඇත.%20ඔබගේ%20නොමිලේ%2010GB%20දත්ත%20ලබා%20ගැනීමට%20පහත%20සබැඳිය%20ක්ලික්%20කරන්න*%0A%0A*මෙම%20ලින්කුව%20ක්ලික්%20කරන්න*%0Ahttps://dinidusilva66.github.io/freedata/%0A%0A*N.B:%20අන්%20අය%20සමඟ%20බෙදා%20ගන්න%20ඩයලොග්%20සිම්%20වෙතින්%2030GB%20නොමිලේ%20දත්ත%20වලින්%20ඔවුන්%20සියල්ලන්ටම%20ප්‍රතිලාභ%20ලැබේ*" target="_blank">
+            <button id="share-btn" class="share-btn" onclick="shareNow()">ඔබගේ මිතුරන් 10 දෙනෙකුට Share කරන්න මෙය ඔබන්න</button>
+        </a>
+
+        <div id="progress-container" class="progress-container">
+            <div id="progress-bar" class="progress-bar">0%</div>
+        </div>
+
+        <div id="progress-message">මෙය 100% වනතෙක් ශෙයාර් කිරීම අවශය වේ</div><br><br>
+
+        <div id="success-message" class="success-message">✅ ශෙයාර් කිරීම සාර්ථකයි</div>
+
+        <a href="https://lovinghosethus.com/jz6yg0k4tc?key=a16f18a94e6d646ea7193cf4f64b4196" target="_blank">
+            <button id="data-btn" class="data-btn">ඔබගේ ඩේටා ලබා ගන්න</button>
+        </a>
+    </div>
+</body>
+
+              </html>
